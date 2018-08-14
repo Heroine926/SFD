@@ -1,18 +1,21 @@
 # SFD
+此工程实现caffe下的SFD人脸检测算法。包括train、detection、模型封装、模型性能优化等。
 
 ## 环境需求：
-python+caffe+cuDNN 确保caffe环境以及pycaffe已经编译好
+python+caffe+cuDNN 
 ## 安装步骤：
-此模型是在SSD的基础上改进的，需先下载SSD模型：
+此模型是基于SSD的，需先下载SSD模型：
 ```
 git clone https://github.com/weiliu89/caffe.git 
-# 此模型根目录记为$SSD cd $SSD
+# 此模型根目录记为$SSD 
+cd $SSD
 ```
 编译caffe
 ```
 git checkout ssd cp Makefile.config.example Makefile.config 
 #注释掉Makefile.config文件中的 USE_CUDNN := 1 以及WITH_PYTHON_LAYER := 1两行 
-make -j8 make py make test -j8 （这里用的caffe环境和SSD是一样的） 
+make -j8 make py make test -j8 
+#这里用的caffe环境和SSD是一样的
 ```
 下载SFD预训练好的参数模型 https://pan.baidu.com/s/1nvoW1wH （百度云盘）， 放在$SSD/models路径下。
 ## 使用说明：
