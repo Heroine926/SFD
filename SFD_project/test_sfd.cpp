@@ -15,12 +15,12 @@
 #include <opencv2/opencv.hpp>
 
 
-#include "/data/home/larainelu/SFD/SFD_project/soSFD.h"
+#include "./soSFD.h"
 
 using namespace std;
 using namespace cv;
 
-#define LIB_SFD "/data/home/larainelu/SFD/SFD_project/sfd_FaceDetect.so"
+#define LIB_SFD "./sfd_FaceDetect.so"
 
 
 
@@ -30,10 +30,7 @@ extern "C"
 	typedef int (*F_sfd_face_detection_init)(const string& model_def, const string& trained_file, int gpu_id);
 }
 
-
-void motion_blur(Mat &srcImage)
-{
-    int OffsetJ[4] = { 4, -4, -4, 4 };
+  int OffsetJ[4] = { 4, -4, -4, 4 };
     int OffsetI[4] = { -4, -4, 4, 4 };
 
     int sumB,sumG,sumR;
@@ -76,22 +73,14 @@ void motion_blur(Mat &srcImage)
 }
 
 
-
-
-int main()//int argc, char**argv)
+int main()
 {
-        
-	//string model_file = "/data/home/larainelu/ssd/caffe/models/VGGNet/VOC0712/SFD_RES26/deploy.prototxt";
-	string model_file  = "/data/home/larainelu/SFD/caffe/models/VGGNet/WIDER_FACE/SFD_trained/deploy.prototxt";
+   
+	string model_file  = "../caffe/models/VGGNet/WIDER_FACE/SFD_trained/deploy.prototxt";
 	
-	string trained_file = "/data/home/larainelu/SFD/caffe/models/VGGNet/WIDER_FACE/SFD_trained/SFD.caffemodel";
-	//string trained_file = "/data/home/larainelu/ssd/caffe/models/VGGNet/VOC0712/SFD/wider_retrain/VGG_SFD_iter_120000.caffemodel";
-	//string trained_file = "/data/home/larainelu/ssd/caffe/models/VGGNet/VOC0712/SFD_RES26/SFD_RES26.caffemodel";
-
-	//string test_image_path = "/data/home/larainelu/DataSet/TAXI_blur/Data_test/";
-	//string image_list_file = "/data/home/larainelu/DataSet/TAXI_blur/Data_test/image_list.txt";
-	string test_image_path = "/data/home/larainelu/DataSet/widerface/WIDER_val/images/";
-	string image_list_file = "/data/home/larainelu/DataSet/widerface/WIDER_val/images/image_list.txt";
+	string trained_file = "../caffe/models/VGGNet/WIDER_FACE/SFD_trained/SFD.caffemodel";
+	string test_image_path = "./images/";
+	string image_list_file = "./image_list.txt";
         
 	int res = 0;
 	int gpu_id = 2;
@@ -128,84 +117,16 @@ int main()//int argc, char**argv)
 	clock_t start_time = clock();
 	int counter = 0;
 
-        //debug
+   
 	int totalBoxNum = 0;
 	FILE * bbx_file = fopen("/data/home/larainelu/DataSet/widerface/SFD_original_val.txt","w");
-	//FILE * trainlist = fopen("/data/home/larainelu/DataSet/TAXI/train_list.txt","w");
+	
 	if(bbx_file == NULL ) 
 	    cout<<"file error"<<endl;
 	
-	//====================demo code when batch size is 1===================================================
-	while(getline(img_list, img_name))
-    	{
-	  	printf("the %dth picture...\n",counter+1);
-		string Img_path = test_image_path + img_name;
-									
-		cv::Mat img = cv::imread(Img_path,-1);
-		//cout<<Img_path<<endl;
-		if(img.empty())
-		{
-		    	cout<<"image is empty"<<endl;
-			continue;
-			//return 1;
-		}
-		//CHECK(!img.empty()) << "Unable to decode image " << Img_path;
-		//int width = img.cols;
-		//int height = img.rows;
-		
-		std::vector<std::vector<cv::Rect> > vrects;
-		
-		//cout<<"before sfd_det\n";
-		//cout<<&vrects<<endl;
-		res = sfd_face_detection(&img, &vrects,1);
-		
-		//cout<<"after sfd_det  .  res = "<<res<<endl;
-		
-		//cout<<&vrects<<endl;
-		if(res != 0)
-		{
-			if(res == -1) 
-			    cout<<"ERROR: p_cvmat is nullpr\n";
-			if(res == -3)
-			    cout<<"ERROR: img is empty\n";
-			if(res == -5)
-			    cout<<"ERROR: p_vec_vec_tect is nullpr\n";
-			if(res == -7)
-			    cout<<"ERROR: no target in this image\n";
-			continue;
-		}
-
-		cout<<Img_path<<endl;
-		std::vector<cv::Rect> &rects = vrects[0];
-		cout<<"boxes number:"<<rects.size()<<endl;
-		totalBoxNum += rects.size();
-		for(int i = 0;i < rects.size();i++)
-		{
-			cout<< rects[i].x<<"    ";
-			cout<< rects[i].y<<"    ";
-			cout<< rects[i].width<<"    ";
-			cout<< rects[i].height<<"    ";
-			cout<< endl;
-		}
-		if(!rects.empty())
-		{
-		    //fprintf(trainlist,"%s\n",img_name.c_str());
-		    fprintf(bbx_file,"%s\n%d\n",img_name.c_str(),rects.size());
-		    for(int i = 0; i < rects.size();i++)
-		    {
-			fprintf(bbx_file,"%d    %d    %d    %d\n",rects[i].x,rects[i].y,rects[i].width,rects[i].height);
-		    }
-		}
-		counter++;
-	}
-	fclose(bbx_file);
-	//fclose(trainlist);
-	//=====================================================================================================*/
-
-
 
 	
-	/*====================demo code when batch size is not 1===================================================
+	
 	bool end = false;
 	int batchSize = 1 ;
 	FILE* result = fopen("/data/home/larainelu/SFD/tools/taxi_my.txt","w");
@@ -298,7 +219,7 @@ int main()//int argc, char**argv)
 	printf("total box num: %d\n",totalBoxNum);
 
 	dlclose(handle);
-        //exit(EXIT_SUCCESS);
+     
 
 	return 0;
 }

@@ -304,8 +304,5 @@ extern "C" int sfd_face_detection(const void *p_cvmat, void* p_vec_vec_rect, int
 
 
 
-int main()
-{
-    return 0;
-}
+
 
